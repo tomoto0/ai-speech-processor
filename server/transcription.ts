@@ -12,8 +12,7 @@ export async function transcribeAudioWithDeepgram(
 ): Promise<string | null> {
   try {
     if (!DEEPGRAM_API_KEY) {
-      console.error("[DEEPGRAM ERROR] API key not found in environment variables");
-      console.error("[DEEPGRAM ERROR] Please set DEEPGRAM_API_KEY environment variable");
+      console.error("[DEEPGRAM ERROR] API key not found");
       return null;
     }
 
@@ -31,11 +30,8 @@ export async function transcribeAudioWithDeepgram(
 
     console.log(`[DEEPGRAM] Audio data size: ${audioLength} bytes`);
     
-    // Minimum audio size: 100 bytes (very short audio)
     if (audioLength < 100) {
-      console.warn(
-        `[DEEPGRAM WARNING] Audio data too small: ${audioLength} bytes`
-      );
+      console.warn(`[DEEPGRAM WARNING] Audio data too small: ${audioLength} bytes`);
       return null;
     }
 
@@ -53,23 +49,26 @@ export async function transcribeAudioWithDeepgram(
 
     console.log(`[DEEPGRAM] Final buffer size: ${bodyData.length} bytes`);
 
-    const headers = {
-      Authorization: `Token ${DEEPGRAM_API_KEY}`,
-      "Content-Type": "audio/webm",
-    };
-
+    // Build query parameters
     const params = new URLSearchParams({
-      model: "nova-2",
+      model: "nova-3",  // Use nova-3 instead of nova-2
       smart_format: "true",
       language: language,
       punctuate: "true",
       diarize: "false",
     });
 
-    console.log("[DEEPGRAM] Making API request...");
-    console.log(`[DEEPGRAM] URL: ${DEEPGRAM_URL}?${params.toString()}`);
+    // Build headers with correct authentication format
+    const headers: Record<string, string> = {
+      "Authorization": `Token ${DEEPGRAM_API_KEY}`,
+      "Content-Type": "audio/webm",
+    };
 
-    const response = await fetch(`${DEEPGRAM_URL}?${params.toString()}`, {
+    const url = `${DEEPGRAM_URL}?${params.toString()}`;
+    console.log(`[DEEPGRAM] Making API request to: ${url}`);
+    console.log(`[DEEPGRAM] Headers: Authorization: Token ${DEEPGRAM_API_KEY.substring(0, 10)}...`);
+
+    const response = await fetch(url, {
       method: "POST",
       headers,
       body: bodyData as any,
@@ -80,7 +79,6 @@ export async function transcribeAudioWithDeepgram(
     if (response.status === 200) {
       const result = await response.json();
       console.log("[DEEPGRAM] Response received successfully");
-      console.log("[DEEPGRAM] Response:", JSON.stringify(result).substring(0, 200));
 
       // Extract transcript with better error handling
       try {
@@ -99,14 +97,10 @@ export async function transcribeAudioWithDeepgram(
         const transcript = alternatives[0]?.transcript || "";
         const confidence = alternatives[0]?.confidence || 0;
 
-        console.log(
-          `[DEEPGRAM] Transcript: '${transcript}' (confidence: ${confidence})`
-        );
+        console.log(`[DEEPGRAM] Transcript: '${transcript}' (confidence: ${confidence})`);
 
         if (transcript && transcript.trim()) {
-          console.log(
-            `[DEEPGRAM SUCCESS] Transcribed: '${transcript}' (${transcript.length} chars)`
-          );
+          console.log(`[DEEPGRAM SUCCESS] Transcribed: '${transcript}' (${transcript.length} chars)`);
           return transcript.trim();
         } else {
           console.log("[DEEPGRAM] Empty transcript returned");
@@ -118,16 +112,12 @@ export async function transcribeAudioWithDeepgram(
       }
     } else if (response.status === 401) {
       const errorText = await response.text();
-      console.error(
-        `[DEEPGRAM ERROR] Authentication failed (401): ${errorText}`
-      );
+      console.error(`[DEEPGRAM ERROR] Authentication failed (401): ${errorText}`);
       console.error("[DEEPGRAM ERROR] Please check your Deepgram API key");
       return null;
     } else {
       const errorText = await response.text();
-      console.error(
-        `[DEEPGRAM ERROR] Status: ${response.status}, Response: ${errorText}`
-      );
+      console.error(`[DEEPGRAM ERROR] Status: ${response.status}, Response: ${errorText}`);
       return null;
     }
   } catch (error) {

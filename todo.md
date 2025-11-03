@@ -52,3 +52,10 @@
 - [x] 音声データのBase64エンコーディング/デコーディングの問題を確認
 - [x] Deepgram APIへのリクエスト形式を確認
 
+
+
+
+## Deployment Issues
+
+- [x] Deepgram APIリクエスト形式をnova-3、正しい認証ヘッダーで修正
+
