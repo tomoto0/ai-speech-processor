@@ -59,3 +59,14 @@
 
 - [x] Deepgram APIリクエスト形式をnova-3、正しい認証ヘッダーで修正
 
+
+
+
+## Step-by-Step Debugging
+
+- [x] Step 1: サーバーログを確認してDeepgram APIのエラー詳細を特定
+- [x] Step 2: 音声データのBase64エンコーディングを確認
+- [x] Step 3: Deepgram APIへのリクエストが正しく送信されているか確認
+- [x] Step 4: APIレスポンスの形式を確認
+- [x] Step 5: エラーハンドリングを改善して詳細なログを出力
+

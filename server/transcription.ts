@@ -30,7 +30,7 @@ export async function transcribeAudioWithDeepgram(
 
     console.log(`[DEEPGRAM] Audio data size: ${audioLength} bytes`);
     
-    if (audioLength < 100) {
+    if (audioLength < 10) {
       console.warn(`[DEEPGRAM WARNING] Audio data too small: ${audioLength} bytes`);
       return null;
     }
@@ -117,7 +117,15 @@ export async function transcribeAudioWithDeepgram(
       return null;
     } else {
       const errorText = await response.text();
-      console.error(`[DEEPGRAM ERROR] Status: ${response.status}, Response: ${errorText}`);
+      console.error(`[DEEPGRAM ERROR] Status: ${response.status}`);
+      console.error(`[DEEPGRAM ERROR] Response: ${errorText}`);
+      console.error(`[DEEPGRAM ERROR] Response length: ${errorText.length}`);
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.error(`[DEEPGRAM ERROR] Error JSON:`, errorJson);
+      } catch (e) {
+        console.error(`[DEEPGRAM ERROR] Could not parse error as JSON`);
+      }
       return null;
     }
   } catch (error) {
