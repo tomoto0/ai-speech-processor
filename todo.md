@@ -70,3 +70,15 @@
 - [x] Step 4: APIレスポンスの形式を確認
 - [x] Step 5: エラーハンドリングを改善して詳細なログを出力
 
+
+
+
+## Deepgram API 401 Error Fix
+
+- [ ] Deepgram APIキーの有効性を確認
+- [ ] リクエストヘッダーの形式を確認（Authorization: Token形式が正しいか）
+- [ ] Content-Typeが正しく設定されているか確認
+- [ ] クライアント側のBase64エンコーディングが正しいか確認
+- [ ] サーバー側でBase64デコード後のデータが正しいか確認
+- [ ] Deepgram APIのレスポンスエラーメッセージを確認
+

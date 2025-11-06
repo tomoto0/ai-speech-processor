@@ -61,7 +61,7 @@ export async function transcribeAudioWithDeepgram(
     // Build headers with correct authentication format
     const headers: Record<string, string> = {
       "Authorization": `Token ${DEEPGRAM_API_KEY}`,
-      "Content-Type": "audio/webm",
+      "Content-Type": "audio/wav",  // Changed from audio/webm to audio/wav
     };
 
     const url = `${DEEPGRAM_URL}?${params.toString()}`;
@@ -75,6 +75,7 @@ export async function transcribeAudioWithDeepgram(
     });
 
     console.log(`[DEEPGRAM] Response status: ${response.status}`);
+    console.log(`[DEEPGRAM] API Key being used: ${DEEPGRAM_API_KEY.substring(0, 10)}...${DEEPGRAM_API_KEY.substring(DEEPGRAM_API_KEY.length - 5)}`);
 
     if (response.status === 200) {
       const result = await response.json();
@@ -112,8 +113,10 @@ export async function transcribeAudioWithDeepgram(
       }
     } else if (response.status === 401) {
       const errorText = await response.text();
-      console.error(`[DEEPGRAM ERROR] Authentication failed (401): ${errorText}`);
-      console.error("[DEEPGRAM ERROR] Please check your Deepgram API key");
+      console.error(`[DEEPGRAM ERROR] Authentication failed (401)`);
+      console.error(`[DEEPGRAM ERROR] Response: ${errorText}`);
+      console.error(`[DEEPGRAM ERROR] API Key: ${DEEPGRAM_API_KEY}`);
+      console.error("[DEEPGRAM ERROR] Please verify your Deepgram API key is valid");
       return null;
     } else {
       const errorText = await response.text();
