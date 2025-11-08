@@ -3,7 +3,14 @@
  * Note: Deepgram API key should be set in environment variables
  */
 
-const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY || "f15a08a21d03dfdb24a3ee8360ef0eeb79ffa921";
+const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY || "";
+
+// Log API key status on startup
+if (!DEEPGRAM_API_KEY) {
+  console.warn("[DEEPGRAM WARNING] No API key configured. Set DEEPGRAM_API_KEY environment variable.");
+} else {
+  console.log(`[DEEPGRAM] API key configured: ${DEEPGRAM_API_KEY.substring(0, 10)}...`);
+}
 const DEEPGRAM_URL = "https://api.deepgram.com/v1/listen";
 
 export async function transcribeAudioWithDeepgram(
@@ -12,7 +19,7 @@ export async function transcribeAudioWithDeepgram(
 ): Promise<string | null> {
   try {
     if (!DEEPGRAM_API_KEY) {
-      console.error("[DEEPGRAM ERROR] API key not found");
+      console.error("[DEEPGRAM ERROR] API key not configured. Please set DEEPGRAM_API_KEY environment variable.");
       return null;
     }
 
@@ -75,8 +82,6 @@ export async function transcribeAudioWithDeepgram(
     });
 
     console.log(`[DEEPGRAM] Response status: ${response.status}`);
-    console.log(`[DEEPGRAM] API Key being used: ${DEEPGRAM_API_KEY.substring(0, 10)}...${DEEPGRAM_API_KEY.substring(DEEPGRAM_API_KEY.length - 5)}`);
-
     if (response.status === 200) {
       const result = await response.json();
       console.log("[DEEPGRAM] Response received successfully");
