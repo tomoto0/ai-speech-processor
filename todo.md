@@ -85,3 +85,34 @@
 - [ ] サーバー側でBase64デコード後のデータが正しいか確認
 - [ ] Deepgram APIのレスポンスエラーメッセージを確認
 
+
+
+
+## Deployment Error Fixes
+
+- [ ] Step 1: Deepgram API 500 エラーの原因を特定・修正
+  - Deepgram API キーが正しく読み込まれているか確認
+  - API リクエストのログを詳細化
+  - エラーレスポンスを詳細に記録
+- [ ] Step 2: Amplitude Logger タイムアウトエラーを修正
+  - リモート設定取得のタイムアウト時間を増加
+  - または Amplitude ロギングを無効化
+- [ ] Step 3: SpaceService 401 エラーを修正
+  - OAuth 認証の設定を確認
+  - または SpaceService 呼び出しを削除
+- [ ] Step 4: 修正後の再デプロイと機能テスト
+  - ビルド確認
+  - チェックポイント作成
+  - デプロイ実行
+  - 全機能テスト
+
+
+
+
+## Current Deployment Error Fixes
+
+- [x] Step 1: Deepgram API 500 error - Content-Type changed to audio/webm
+- [ ] Step 2: Amplitude Logger timeout error
+- [ ] Step 3: SpaceService 401 error
+- [ ] Step 4: Re-deploy and test all features
+

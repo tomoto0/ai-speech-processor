@@ -68,7 +68,7 @@ export async function transcribeAudioWithDeepgram(
     // Build headers with correct authentication format
     const headers: Record<string, string> = {
       "Authorization": `Token ${DEEPGRAM_API_KEY}`,
-      "Content-Type": "audio/wav",  // Changed from audio/webm to audio/wav
+      "Content-Type": "audio/webm",  // WebM format from browser MediaRecorder
     };
 
     const url = `${DEEPGRAM_URL}?${params.toString()}`;
