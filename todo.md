@@ -116,3 +116,16 @@
 - [ ] Step 3: SpaceService 401 error
 - [ ] Step 4: Re-deploy and test all features
 
+
+
+
+## GitHub Repository Migration
+
+- [x] GitHub Private リポジトリをクローン
+- [x] アプリケーション構造を分析
+- [x] Gemini API の使用箇所を特定（既に Manus LLM に対応）
+- [x] Deepgram API キーをハードコード
+- [x] ビルド成功確認
+- [ ] チェックポイント作成
+- [ ] Manus プラットフォームにデプロイ
+

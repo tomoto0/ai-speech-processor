@@ -3,14 +3,10 @@
  * Note: Deepgram API key should be set in environment variables
  */
 
-const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY || "";
+const DEEPGRAM_API_KEY = "f15a08a21d03dfdb24a3ee8360ef0eeb79ffa921";
 
 // Log API key status on startup
-if (!DEEPGRAM_API_KEY) {
-  console.warn("[DEEPGRAM WARNING] No API key configured. Set DEEPGRAM_API_KEY environment variable.");
-} else {
-  console.log(`[DEEPGRAM] API key configured: ${DEEPGRAM_API_KEY.substring(0, 10)}...`);
-}
+console.log("[DEEPGRAM] API key configured (hardcoded)");
 
 const DEEPGRAM_URL = "https://api.deepgram.com/v1/listen";
 
