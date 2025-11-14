@@ -88,20 +88,37 @@ export default function AudioProcessor() {
 
   const processAudio = async (audioBlob: Blob) => {
     try {
+      // Validate audio blob
+      console.log(`[AUDIO] Blob size: ${audioBlob.size} bytes, type: ${audioBlob.type}`);
+      
+      if (audioBlob.size < 1000) {
+        alert("音声が短すぎます。もっと長く録音してください。");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64Audio = (reader.result as string).split(",")[1];
+        try {
+          const base64Audio = (reader.result as string).split(",")[1];
+          console.log(`[AUDIO] Base64 size: ${base64Audio.length} characters`);
 
-        const transcribeResult = await transcribeMutation.mutateAsync({
-          audioData: base64Audio,
-          language: "ja",
-        });
+          console.log("[TRANSCRIBE] Starting transcription...");
+          const transcribeResult = await transcribeMutation.mutateAsync({
+            audioData: base64Audio,
+            language: "ja",
+          });
 
-        setTranscription(transcribeResult.transcription);
+          console.log(`[TRANSCRIBE] Success: ${transcribeResult.transcription}`);
+          setTranscription(transcribeResult.transcription);
+        } catch (error: any) {
+          console.error("[TRANSCRIBE ERROR]", error);
+          const errorMessage = error?.message || "不明なエラー";
+          alert(`トランスクリプションエラー: ${errorMessage}`);
+        }
       };
       reader.readAsDataURL(audioBlob);
     } catch (error) {
-      console.error("Error processing audio:", error);
+      console.error("[AUDIO ERROR] Error processing audio:", error);
       alert("音声処理エラー");
     }
   };
@@ -113,14 +130,17 @@ export default function AudioProcessor() {
     }
 
     try {
+      console.log("[TRANSLATE] Starting translation...");
       const result = await translateMutation.mutateAsync({
         text: transcription,
         targetLanguage: targetLanguage,
       });
+      console.log(`[TRANSLATE] Success: ${result.translation}`);
       setTranslation(result.translation);
-    } catch (error) {
-      console.error("Translation error:", error);
-      alert("翻訳エラー");
+    } catch (error: any) {
+      console.error("[TRANSLATE ERROR]", error);
+      const errorMessage = error?.message || "不明なエラー";
+      alert(`翻訳エラー: ${errorMessage}`);
     }
   };
 
@@ -131,14 +151,17 @@ export default function AudioProcessor() {
     }
 
     try {
+      console.log("[SUMMARIZE] Starting summarization...");
       const result = await summarizeMutation.mutateAsync({
         transcript: transcription,
         summaryType: summaryType,
       });
+      console.log(`[SUMMARIZE] Success: ${result.summary}`);
       setSummary(result.summary);
-    } catch (error) {
-      console.error("Summarization error:", error);
-      alert("要約エラー");
+    } catch (error: any) {
+      console.error("[SUMMARIZE ERROR]", error);
+      const errorMessage = error?.message || "不明なエラー";
+      alert(`要約エラー: ${errorMessage}`);
     }
   };
 
