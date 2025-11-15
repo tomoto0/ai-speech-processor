@@ -14,6 +14,46 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
+// Language options for recording
+const RECORDING_LANGUAGES = {
+  ja: "日本語",
+  en: "English",
+  es: "Español",
+  fr: "Français",
+  de: "Deutsch",
+  zh: "中文",
+  ko: "한국어",
+  ru: "Русский",
+  ar: "العربية",
+  pt: "Português",
+};
+
+// Language options for translation
+const TRANSLATION_LANGUAGES = {
+  en: "English",
+  es: "Español",
+  fr: "Français",
+  de: "Deutsch",
+  zh: "中文",
+  ko: "한국어",
+  ru: "Русский",
+  ar: "العربية",
+  pt: "Português",
+  ja: "日本語",
+};
+
+// Language options for summary
+const SUMMARY_LANGUAGES = {
+  ja: "日本語",
+  en: "English",
+  es: "Español",
+  fr: "Français",
+  de: "Deutsch",
+  zh: "中文",
+  ko: "한국어",
+  ru: "Русский",
+};
+
 export default function AudioProcessor() {
   const [, setLocation] = useLocation();
   const [isRecording, setIsRecording] = useState(false);
@@ -21,7 +61,9 @@ export default function AudioProcessor() {
   const [transcription, setTranscription] = useState("");
   const [translation, setTranslation] = useState("");
   const [summary, setSummary] = useState("");
+  const [recordingLanguage, setRecordingLanguage] = useState("ja");
   const [targetLanguage, setTargetLanguage] = useState("en");
+  const [summaryLanguage, setSummaryLanguage] = useState("ja");
   const [summaryType, setSummaryType] = useState<"short" | "medium" | "detailed">(
     "medium"
   );
@@ -151,10 +193,10 @@ export default function AudioProcessor() {
           const base64Audio = (reader.result as string).split(",")[1];
           console.log(`[AUDIO] Base64 size: ${base64Audio.length} characters`);
 
-          console.log("[TRANSCRIBE] Starting transcription...");
+          console.log(`[TRANSCRIBE] Starting transcription (language: ${recordingLanguage})...`);
           const transcribeResult = await transcribeMutation.mutateAsync({
             audioData: base64Audio,
-            language: "ja",
+            language: recordingLanguage,
           });
 
           console.log(`[TRANSCRIBE] Success: ${transcribeResult.transcription}`);
@@ -179,7 +221,7 @@ export default function AudioProcessor() {
     }
 
     try {
-      console.log("[TRANSLATE] Starting translation...");
+      console.log(`[TRANSLATE] Starting translation (target: ${targetLanguage})...`);
       const result = await translateMutation.mutateAsync({
         text: transcription,
         targetLanguage: targetLanguage,
@@ -200,10 +242,11 @@ export default function AudioProcessor() {
     }
 
     try {
-      console.log("[SUMMARIZE] Starting summarization...");
+      console.log(`[SUMMARIZE] Starting summarization (language: ${summaryLanguage}, type: ${summaryType})...`);
       const result = await summarizeMutation.mutateAsync({
         transcript: transcription,
         summaryType: summaryType,
+        summaryLanguage: summaryLanguage,
       });
       console.log(`[SUMMARIZE] Success: ${result.summary}`);
       setSummary(result.summary);
@@ -224,6 +267,9 @@ export default function AudioProcessor() {
       transcription,
       translation,
       summary,
+      recordingLanguage: RECORDING_LANGUAGES[recordingLanguage as keyof typeof RECORDING_LANGUAGES],
+      targetLanguage: TRANSLATION_LANGUAGES[targetLanguage as keyof typeof TRANSLATION_LANGUAGES],
+      summaryLanguage: SUMMARY_LANGUAGES[summaryLanguage as keyof typeof SUMMARY_LANGUAGES],
       timestamp: new Date().toISOString(),
     };
     const json = JSON.stringify(data, null, 2);
@@ -251,12 +297,26 @@ export default function AudioProcessor() {
         <div className="bg-white rounded-lg shadow-xl p-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">音声処理</h1>
           <p className="text-gray-600 mb-6">
-            音声を録音して、テキストに変換、翻訳、要約できます。
+            複数言語に対応した音声処理。音声を録音して、テキストに変換、翻訳、要約できます。
           </p>
 
           {/* Recording Section */}
           <Card className="mb-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">音声録音</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                入力音声の言語
+              </label>
+              <select
+                value={recordingLanguage}
+                onChange={(e) => setRecordingLanguage(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded"
+              >
+                {Object.entries(RECORDING_LANGUAGES).map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
+              </select>
+            </div>
             <div className="flex gap-4 mb-4">
               <Button
                 onClick={startRecording}
@@ -287,6 +347,9 @@ export default function AudioProcessor() {
           {transcription && (
             <Card className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">トランスクリプション</h2>
+              <p className="text-sm text-gray-500 mb-2">
+                言語: {RECORDING_LANGUAGES[recordingLanguage as keyof typeof RECORDING_LANGUAGES]}
+              </p>
               <Textarea
                 value={transcription}
                 readOnly
@@ -305,33 +368,34 @@ export default function AudioProcessor() {
           {/* Translation Section */}
           <Card className="mb-6 p-6 bg-gradient-to-r from-green-50 to-blue-50">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">翻訳</h2>
-            <div className="flex gap-4 mb-4">
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                翻訳先言語
+              </label>
               <select
                 value={targetLanguage}
                 onChange={(e) => setTargetLanguage(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded"
+                className="w-full px-4 py-2 border border-gray-300 rounded"
               >
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-                <option value="zh">中文</option>
+                {Object.entries(TRANSLATION_LANGUAGES).map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
               </select>
-              <Button
-                onClick={handleTranslate}
-                disabled={!transcription || translateMutation.isPending}
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
-                {translateMutation.isPending ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    翻訳中...
-                  </>
-                ) : (
-                  "翻訳"
-                )}
-              </Button>
             </div>
+            <Button
+              onClick={handleTranslate}
+              disabled={!transcription || translateMutation.isPending}
+              className="bg-green-600 hover:bg-green-700 text-white mb-4"
+            >
+              {translateMutation.isPending ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  翻訳中...
+                </>
+              ) : (
+                "翻訳"
+              )}
+            </Button>
             {translation && (
               <>
                 <Textarea
@@ -353,31 +417,50 @@ export default function AudioProcessor() {
           {/* Summary Section */}
           <Card className="mb-6 p-6 bg-gradient-to-r from-orange-50 to-purple-50">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">要約</h2>
-            <div className="flex gap-4 mb-4">
-              <select
-                value={summaryType}
-                onChange={(e) => setSummaryType(e.target.value as "short" | "medium" | "detailed")}
-                className="px-4 py-2 border border-gray-300 rounded"
-              >
-                <option value="short">短い要約</option>
-                <option value="medium">中程度の要約</option>
-                <option value="detailed">詳細な要約</option>
-              </select>
-              <Button
-                onClick={handleSummarize}
-                disabled={!transcription || summarizeMutation.isPending}
-                className="bg-orange-600 hover:bg-orange-700 text-white"
-              >
-                {summarizeMutation.isPending ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    要約中...
-                  </>
-                ) : (
-                  "要約生成"
-                )}
-              </Button>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  要約タイプ
+                </label>
+                <select
+                  value={summaryType}
+                  onChange={(e) => setSummaryType(e.target.value as "short" | "medium" | "detailed")}
+                  className="w-full px-4 py-2 border border-gray-300 rounded"
+                >
+                  <option value="short">短い要約</option>
+                  <option value="medium">中程度の要約</option>
+                  <option value="detailed">詳細な要約</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  要約の言語
+                </label>
+                <select
+                  value={summaryLanguage}
+                  onChange={(e) => setSummaryLanguage(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded"
+                >
+                  {Object.entries(SUMMARY_LANGUAGES).map(([code, name]) => (
+                    <option key={code} value={code}>{name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
+            <Button
+              onClick={handleSummarize}
+              disabled={!transcription || summarizeMutation.isPending}
+              className="bg-orange-600 hover:bg-orange-700 text-white mb-4"
+            >
+              {summarizeMutation.isPending ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  要約中...
+                </>
+              ) : (
+                "要約生成"
+              )}
+            </Button>
             {summary && (
               <>
                 <Textarea
