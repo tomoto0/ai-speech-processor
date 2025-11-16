@@ -263,6 +263,49 @@ export default function AudioProcessor() {
   };
 
   const downloadAsJSON = () => {
+
+  const downloadAsText = () => {
+    const lines = [
+      "AI Speech Processor - Export Report",
+      `Generated: ${new Date().toISOString()}`,
+      "",
+      "================================================================================",
+      "RECORDING INFORMATION",
+      "================================================================================",
+      `Recording Language: ${RECORDING_LANGUAGES[recordingLanguage as keyof typeof RECORDING_LANGUAGES]}`,
+      `Timestamp: ${new Date().toISOString()}`,
+      "",
+      "================================================================================",
+      "TRANSCRIPTION",
+      "================================================================================",
+      transcription,
+    ];
+
+    if (translation) {
+      lines.push("");
+      lines.push("================================================================================");
+      lines.push(`TRANSLATION (${TRANSLATION_LANGUAGES[targetLanguage as keyof typeof TRANSLATION_LANGUAGES]})`);
+      lines.push("================================================================================");
+      lines.push(translation);
+    }
+
+    if (summary) {
+      lines.push("");
+      lines.push("================================================================================");
+      lines.push(`SUMMARY (${SUMMARY_LANGUAGES[summaryLanguage as keyof typeof SUMMARY_LANGUAGES]})`);
+      lines.push("================================================================================");
+      lines.push(summary);
+    }
+
+    const textContent = lines.join("\n");
+    const blob = new Blob([textContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `audio-processing-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
     const data = {
       transcription,
       translation,

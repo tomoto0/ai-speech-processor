@@ -1,0 +1,35 @@
+
+  const downloadAsText = () => {
+    const textContent = `AI Speech Processor - Export Report
+Generated: ${new Date().toISOString()}
+
+================================================================================
+RECORDING INFORMATION
+================================================================================
+Recording Language: ${RECORDING_LANGUAGES[recordingLanguage as keyof typeof RECORDING_LANGUAGES]}
+Timestamp: ${new Date().toISOString()}
+
+================================================================================
+TRANSCRIPTION
+================================================================================
+${transcription}
+
+${translation ? `================================================================================
+TRANSLATION (${TRANSLATION_LANGUAGES[targetLanguage as keyof typeof TRANSLATION_LANGUAGES]})
+================================================================================
+${translation}
+
+` : ''}${summary ? `================================================================================
+SUMMARY (${SUMMARY_LANGUAGES[summaryLanguage as keyof typeof SUMMARY_LANGUAGES]})
+================================================================================
+${summary}
+` : ''}`;
+    
+    const blob = new Blob([textContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `audio-processing-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };

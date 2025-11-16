@@ -98,6 +98,7 @@ Requirements:
 - Professional business language with executive tone
 - Capture the essence and business impact in minimal words
 - Prioritize actionable insights and strategic implications
+- Do NOT include any introductory phrases or preamble. Start directly with the summary.
 - ${languageInstruction}
 
 Transcript: ${transcript}`;
@@ -113,6 +114,7 @@ Requirements:
 - Professional business writing style suitable for team sharing
 - Clear logical flow from overview to specifics to conclusions
 - Suitable for middle management and project teams
+- Do NOT include any introductory phrases or preamble. Start directly with the summary.
 - ${languageInstruction}
 
 Transcript: ${transcript}`;
@@ -128,6 +130,8 @@ Analyze the following transcript and provide a DETAILED comprehensive summary wi
 4. Main Topics (5-7 topics): Clear titles, context, key points, supporting evidence, business relevance, connections, implications
 5. Key Arguments (10-12 sentences): Main arguments, evidence quality, reasoning patterns, supporting data, counterarguments, logical consistency, persuasiveness, validity
 6. Conclusions (10-12 sentences): All conclusions, decisions, action items, timelines, resource requirements, responsibility assignments, success metrics, risk factors
+
+IMPORTANT: Do NOT include any introductory phrases like "Thank you for providing", "I appreciate", or "As requested". Start directly with the analysis. Do not add any preamble or meta-commentary about the task itself.
 
 ${languageInstruction}
 
