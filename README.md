@@ -193,7 +193,7 @@ Manus Dashboard の **Settings → Secrets** で以下を設定：
 
 | 環境変数名 | 説明 | 例 |
 |-----------|------|-----|
-| `DEEPGRAM_API_KEY` | Deepgram API キー | `f15a08a21d03dfdb24a3ee8360ef0eeb79ffa921` |
+| `DEEPGRAM_API_KEY` | Deepgram API キー | `(You can replace the temporal API key to your own Deepgram API key)` |
 | `DATABASE_URL` | MySQL 接続文字列 | `mysql://user:pass@host/db` |
 | `JWT_SECRET` | JWT 署名用シークレット | (自動生成) |
 
