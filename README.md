@@ -220,7 +220,7 @@ pnpm build
 ## 画面イメージ
 
 ### ホームページ
-![AI Speech Processor ホーム](./docs/home-screen.png)
+![AI Speech Processor ホーム](./docs/home-screen.jpg)
 
 主な要素：
 - **タイトル**: 「音声をテキストに、言語の壁を越える」
